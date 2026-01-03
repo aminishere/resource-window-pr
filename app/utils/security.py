@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 import os
-
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from fastapi import Depends, HTTPException, status
@@ -13,7 +12,6 @@ from app.database import get_db
 
 
 JWT_SECRET_KEY = "secret"
-
 JWT_ALGORITHM = "HS256"
 JWT_EXPIRATION_HOURS = 24
 
@@ -28,9 +26,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
 
-
 security = HTTPBearer(auto_error=True)
-
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
     to_encode = data.copy()
