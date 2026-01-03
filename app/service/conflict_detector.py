@@ -1,9 +1,6 @@
-
-
 from datetime import datetime
 from sqlalchemy.orm import Session
 from app.models.booking import Booking
-
 
 def check_time_overlap(
     existing_start: datetime,
@@ -11,7 +8,7 @@ def check_time_overlap(
     new_start: datetime,
     new_end: datetime,
 ) -> bool:
-    """Check if two time ranges overlap."""
+    #Check if two time ranges overlap.
     return new_start < existing_end and new_end > existing_start
 
 
@@ -22,7 +19,7 @@ def get_conflicting_bookings(
     end_time: datetime,
     exclude_booking_id: int = None,
 ) -> list:
-    """Get all confirmed bookings that conflict with the requested time."""
+    #Get all confirmed bookings that conflict with the requested time.
     query = db.query(Booking).filter(
         Booking.resource_id == resource_id,
         Booking.status == "confirmed",
@@ -43,7 +40,7 @@ def has_conflicts(
     end_time: datetime,
     exclude_booking_id: int = None,
 ) -> bool:
-    """Check if there are any conflicting bookings."""
+    #Check if there are any conflicting bookings.
     conflicts = get_conflicting_bookings(
         db, resource_id, start_time, end_time, exclude_booking_id
     )
