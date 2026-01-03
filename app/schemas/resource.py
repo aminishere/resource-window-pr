@@ -1,4 +1,3 @@
-# app/schemas/resource.py
 from pydantic import BaseModel
 
 class ResourceCreate(BaseModel):

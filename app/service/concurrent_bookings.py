@@ -11,7 +11,7 @@ def lock_and_create(
     user_id: int,
 ) -> Booking:
         
-    #Lock rows first, then check and insert.    
+    #Lock rows first, then check & insert.    
     try:
         conflicts = (
             db.query(Booking)
