@@ -6,7 +6,7 @@ from app.service.booking_service import (create_booking, update_booking, cancel_
 from app.database import get_db
 from app.models.user import User
 from app.models.booking import Booking
-from app.schemas.booking import BookingCreate, BookingOut
+from app.schemas.booking import BookingCreate, BookingOut, BookingUpdate
 from app.utils.security import get_current_user
 
 router = APIRouter(prefix="/bookings", tags=["bookings"])
@@ -24,15 +24,14 @@ def book_resource( payload: BookingCreate, db: Session = Depends(get_db), curren
 
 
 @router.patch("/{booking_id}", response_model=BookingOut) # Update Booking
-def modify_booking( booking_id: int, start_time: Optional[datetime] = Query(None), end_time: Optional[datetime] = Query(None),
-     db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+def modify_booking( booking_id: int, payload: BookingUpdate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     
     return update_booking(
         db=db,
         booking_id=booking_id,
         user_id=current_user.id,
-        start_time=start_time,
-        end_time=end_time,
+        start_time=payload.start_time,
+        end_time=payload.end_time,
     )
 
 @router.delete("/{booking_id}", response_model=BookingOut) # Cancel Booking

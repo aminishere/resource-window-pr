@@ -12,7 +12,7 @@ def create_booking( db: Session, resource_id: int, start_time: datetime, end_tim
     return lock_and_create(db, resource_id, start_time, end_time, user_id)
 
 
-def update_booking(db: Session, booking_id: int, user_id: int, start_time: datetime = None, end_time: datetime = None) -> Booking: #Update a booking with conflict detection using lock_and_create.
+def update_booking(db: Session, booking_id: int, user_id: int, start_time: datetime = None, end_time: datetime = None) -> Booking: #Update a booking with conflict detection.
 
     booking = db.query(Booking).filter(
         Booking.id == booking_id,
@@ -30,18 +30,15 @@ def update_booking(db: Session, booking_id: int, user_id: int, start_time: datet
     
     validate_booking_times(new_start, new_end)
     
-    booking.status = "cancelled" # Delete old booking temporarily to avoid self-conflict
-    db.commit()
+    # Update the booking directly instead of creating a new one
+    booking.start_time = new_start
+    booking.end_time = new_end
+    booking.version += 1
     
-    try:
-        updated_booking = lock_and_create(db, booking.resource_id, new_start, new_end, user_id)
-        updated_booking.id = booking.id  # preserve original ID if needed
-        updated_booking.version = booking.version + 1
-        return updated_booking
-    except HTTPException:
-        booking.status = "confirmed" # Restore original booking if update fails
-        db.commit()
-        raise
+    db.commit()
+    db.refresh(booking)
+    
+    return booking
 
 
 def cancel_booking(db: Session, booking_id: int, user_id: int) -> Booking: #Cancel a booking (soft delete).

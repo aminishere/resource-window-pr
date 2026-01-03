@@ -19,7 +19,7 @@ def register(payload: UserCreate, db: Session = Depends(get_db)):
         )
     
     hashed_password = hash_password(payload.password)
-    new_user = User(email=payload.email, password=hashed_password)
+    new_user = User(name=payload.name, email=payload.email, password=hashed_password)
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
@@ -41,5 +41,5 @@ def login(payload: UserCreate, db: Session = Depends(get_db)):
             detail="Invalid email or password",
         )
 
-    access_token = create_access_token(data={"sub": user.id})
+    access_token = create_access_token(data={"sub": str(user.id)})
     return {"access_token": access_token, "token_type": "bearer"}

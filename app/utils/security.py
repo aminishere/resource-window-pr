@@ -29,7 +29,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 
 
-security = HTTPBearer(auto_error=False)
+security = HTTPBearer(auto_error=True)
 
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
@@ -48,12 +48,6 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
 def verify_token(
     credentials: HTTPAuthorizationCredentials = Depends(security),
 ) -> dict:
-    if credentials is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Authorization header missing",
-        )
-
     token = credentials.credentials
 
     try:
