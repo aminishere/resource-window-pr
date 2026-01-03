@@ -6,16 +6,14 @@ from app.service.validators import validate_booking_times
 from app.service.concurrent_bookings import lock_and_create
 
 
-def create_booking( db: Session, resource_id: int, start_time: datetime, end_time: datetime, user_id: int) -> Booking:
+def create_booking( db: Session, resource_id: int, start_time: datetime, end_time: datetime, user_id: int) -> Booking: #Create a booking using locking.
 
-    #Create a booking using locking.
     validate_booking_times(start_time, end_time)
     return lock_and_create(db, resource_id, start_time, end_time, user_id)
 
 
-def update_booking(db: Session, booking_id: int, user_id: int, start_time: datetime = None, end_time: datetime = None) -> Booking:
+def update_booking(db: Session, booking_id: int, user_id: int, start_time: datetime = None, end_time: datetime = None) -> Booking: #Update a booking with conflict detection using lock_and_create.
 
-    #Update a booking with conflict detection using lock_and_create.
     booking = db.query(Booking).filter(
         Booking.id == booking_id,
         Booking.user_id == user_id,
